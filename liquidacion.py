@@ -1,20 +1,26 @@
-def calcular_neto(toneladas, precio_por_tonelada, comision_porcentaje, retencion_porcentaje):
-    # Lógica del Bono: Si supera las 500 toneladas, bajamos la comisión
+def generar_recibo_liquidacion(toneladas, precio_por_tonelada, comision_porcentaje, retencion_porcentaje):
+    # 1. Cálculos de Negocio
     if toneladas > 500:
-        print("--- Aplicando Bono por Gran Productor (-0.5% comisión) ---")
-        comision_porcentaje = comision_porcentaje - 0.5
+        comision_porcentaje -= 0.5
     
     bruto = toneladas * precio_por_tonelada
-    comision = bruto * (comision_porcentaje / 100)
-    retencion = bruto * (retencion_porcentaje / 100)
-    neto = bruto - comision - retencion
-    return neto
+    comision_monto = bruto * (comision_porcentaje / 100)
+    retencion_monto = bruto * (retencion_porcentaje / 100)
+    neto = bruto - comision_monto - retencion_monto
 
-# Datos de prueba (Probemos con 600 toneladas para activar el bono)
-tons = 600 
-precio = 250 
-comision_ref = 2 
-retencion_ref = 3
+    # 2. Construcción del Recibo (Visual)
+    print("\n" + "="*30)
+    print("   DETALLE DE LIQUIDACIÓN")
+    print("="*30)
+    print(f"Toneladas:          {toneladas:>10}")
+    print(f"Precio x Ton:       USD {precio_por_tonelada:>6.2f}")
+    print("-" * 30)
+    print(f"Subtotal Bruto:     USD {bruto:>10.2f}")
+    print(f"Comisión ({comision_porcentaje}%):    -USD {comision_monto:>10.2f}")
+    print(f"Retenciones (3%):   -USD {retencion_monto:>10.2f}")
+    print("-" * 30)
+    print(f"TOTAL NETO A PAGAR: USD {neto:>10.2f}")
+    print("="*30 + "\n")
 
-resultado = calcular_neto(tons, precio, comision_ref, retencion_ref)
-print(f"Liquidación Final: USD {resultado}")
+# Ejecución
+generar_recibo_liquidacion(600, 250, 2, 3)
