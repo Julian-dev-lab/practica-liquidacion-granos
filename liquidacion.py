@@ -1,15 +1,27 @@
+import json
+
+def cargar_configuracion():
+    try:
+        with open('comisiones.json', 'r') as archivo:
+            return json.load(archivo)
+    except FileNotFoundError:
+        # Aquí lanzamos el alerta que mencionabas
+        print("\n[ERROR CRÍTICO] No se encontró el archivo 'comisiones.json'.")
+        print("La liquidación no puede procesarse sin las tasas vigentes.")
+        exit() # Detiene la ejecución por completo
+
 def generar_recibo_liquidacion(productor, toneladas, precio_por_ton, producto):
-    # Definimos el diccionario de comisiones
-    comisiones = {
-        "soja": 2.0,
-        "maiz": 1.5,
-        "trigo": 1.8,
-        "girasol": 2.5
-    }
-    
+    #Cargamos el diccionario desde el archivo externo
+    comisiones = cargar_configuracion()
+
     producto = producto.lower()
-    
-    comision_nativa = comisiones.get(producto, 2.5)
+
+    # 1. Obtenemos el valor por defecto del JSON. 
+    # Si ni siquiera está la clave "default" en el JSON, usamos 2.5 como último recurso
+    tasa_defecto = comisiones.get("default", 2.5)
+
+    # 2. Buscamos el producto, y si no está, usamos la tasa_defecto que leímos antes.
+    comision_nativa = comisiones.get(producto, tasa_defecto)
 
     # Cálculos de Negocio
     if toneladas > 500:
@@ -38,4 +50,4 @@ def generar_recibo_liquidacion(productor, toneladas, precio_por_ton, producto):
 
 
 generar_recibo_liquidacion("Juan Perez", 600, 250, "Soja")
-generar_recibo_liquidacion("Ana Lopez", 600, 240, "Sorgo") # Probará el valor default
+generar_recibo_liquidacion("Ana Lopez", 300, 240, "Poroto") # Probará el valor default
