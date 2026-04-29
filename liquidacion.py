@@ -1,4 +1,6 @@
 import json
+from datetime import datetime
+import uuid # Genera IDs únicos para el comprobante
 from database import coleccion_liquidaciones
 
 def cargar_configuracion():
@@ -33,16 +35,19 @@ def generar_recibo_liquidacion(productor, toneladas, precio_por_ton, producto):
     retencion_monto = bruto * 0.03
     neto = bruto - comision_monto - retencion_monto
 
-    # ... después de todos tus cálculos ...
-    
+    fecha_hoy = datetime.now() # Fecha y hora exacta del sistema
+    # Generamos un número de comprobante único corto
+    nro_ticket = f"LIQ-{uuid.uuid4().hex[:8].upper()}"
+
     # Creamos el documento para MongoDB
     registro = {
+        "nro_comprobante": nro_ticket,
+        "fecha_emision": fecha_hoy,
         "productor": productor,
         "producto": producto,
         "toneladas": toneladas,
         "neto_pagado": neto,
-        "comision_aplicada": comision_nativa,
-        "fecha_proceso": "2026-04-27" # Luego veremos cómo poner la fecha automática
+        "comision_aplicada": comision_nativa
     }
     
     # Insertamos en la base de datos
