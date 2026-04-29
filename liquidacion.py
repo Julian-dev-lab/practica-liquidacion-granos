@@ -1,4 +1,5 @@
 import json
+from database import coleccion_liquidaciones
 
 def cargar_configuracion():
     try:
@@ -31,6 +32,22 @@ def generar_recibo_liquidacion(productor, toneladas, precio_por_ton, producto):
     comision_monto = bruto * (comision_nativa / 100)
     retencion_monto = bruto * 0.03
     neto = bruto - comision_monto - retencion_monto
+
+    # ... después de todos tus cálculos ...
+    
+    # Creamos el documento para MongoDB
+    registro = {
+        "productor": productor,
+        "producto": producto,
+        "toneladas": toneladas,
+        "neto_pagado": neto,
+        "comision_aplicada": comision_nativa,
+        "fecha_proceso": "2026-04-27" # Luego veremos cómo poner la fecha automática
+    }
+    
+    # Insertamos en la base de datos
+    coleccion_liquidaciones.insert_one(registro)
+    print("💾 Liquidación guardada en base de datos.")
 
     # 2. Construcción del Recibo (Visual)
     print("\n" + "="*30)
