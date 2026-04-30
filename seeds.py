@@ -34,5 +34,29 @@ def generar_datos_prueba():
     coleccion_liquidaciones.insert_many(documentos)
     print(f"✅ Se insertaron {len(documentos)} documentos de prueba.")
 
+from database import coleccion_liquidaciones
+import random
+
+def actualizar_comisiones_faltantes():
+    # Buscamos todos los documentos
+    liquidaciones = coleccion_liquidaciones.find({})
+    
+    for liq in liquidaciones:
+        # Generamos una comisión aleatoria entre 1.0 y 3.0
+        comision_random = round(random.uniform(1.0, 3.0), 2)
+        
+        # Actualizamos el documento usando su _id
+        coleccion_liquidaciones.update_one(
+            {"_id": liq["_id"]},
+            {"$set": {"comision_aplicada": comision_random}}
+        )
+    
+    print("✅ Base de datos actualizada con el campo 'comision_aplicada'.")
+
+
+
 if __name__ == "__main__":
     generar_datos_prueba()
+
+if __name__ == "__main__":
+    actualizar_comisiones_faltantes()
